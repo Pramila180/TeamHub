@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Team Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --accent: #ff2d75;
+            --dark: #0f0c29;
+            --darker: #0a081c;
+            --light: #8e9aaf;
+            --success: #00e676;
+            --warning: #ff9800;
+            --danger: #ff1744;
+            --card-bg: rgba(30, 27, 75, 0.7);
+            --card-border: rgba(106, 17, 203, 0.5);
+            --glow: 0 0 15px rgba(106, 17, 203, 0.7);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+            color: white;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(106, 17, 203, 0.1) 0%, rgba(37, 117, 252, 0.05) 30%, transparent 70%);
+            animation: pulse 15s infinite linear;
+        }
+        
+        @keyframes pulse {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Login Section */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+        }
+        
+        .login-form {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: var(--glow);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+            transform: translateY(0);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .login-form:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(106, 17, 203, 0.5);
+        }
+        
+        .login-form h2 {
+            margin-bottom: 1.5rem;
+            color: white;
+            font-weight: 600;
+            font-size: 1.8rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .login-form input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 10px rgba(106, 17, 203, 0.5);
+        }
+        
+        .login-form input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .login-form button {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        .login-form button:hover {
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
+        }
+        
+        /* Main App */
+        .app {
+            display: none;
+            min-height: 100vh;
+        }
+        
+        .app-header {
+            background: rgba(15, 12, 41, 0.8);
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .app-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--accent);
+        }
+        
+        .app-nav {
+            background: rgba(15, 12, 41, 0.6);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--card-border);
+        }
+        
+        .nav-tabs {
+            display: flex;
+            overflow-x: auto;
+            padding: 0;
+        }
+        
+        .nav-tab {
+            background: none;
+            border: none;
+            color: var(--light);
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            transition: all 0.3s;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-tab:hover {
+            color: white;
+            background: rgba(106, 17, 203, 0.2);
+        }
+        
+        .nav-tab.active {
+            color: white;
+            border-bottom-color: var(--accent);
+            background: rgba(106, 17, 203, 0.1);
+        }
+        
+        .notification-badge {
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        .app-main {
+            padding: 2rem 0;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .section-title {
+            margin-bottom: 1.5rem;
+            color: white;
+            font-weight: 600;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Forms */
+        .form-container {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: var(--glow);
+            margin-bottom: 2rem;
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--light);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 10px rgba(106, 17, 203, 0.5);
+        }
+        
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 15px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn:hover {
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        /* Cards and Grids */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--glow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(106, 17, 203, 0.5);
+        }
+        
+        .card-header {
+            padding: 1rem;
+            background: rgba(106, 17, 203, 0.2);
+            border-bottom: 1px solid var(--card-border);
+        }
+        
+        .card-body {
+            padding: 1rem;
+        }
+        
+        .card-title {
+            margin-bottom: 0.5rem;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .card-text {
+            color: var(--light);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .card-text i {
+            margin-right: 8px;
+            color: var(--accent);
+            width: 16px;
+        }
+        
+        /* Chat Section */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: var(--glow);
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+        }
+        
+        .chat-header {
+            padding: 1rem;
+            background: rgba(106, 17, 203, 0.2);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .online-users {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 18px;
+            position: relative;
+            animation: messageAppear 0.3s;
+        }
+        
+        @keyframes messageAppear {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.owner {
+            align-self: flex-end;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .message.team {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .message-sender {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+        
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 0.25rem;
+            text-align: right;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 1rem;
+            border-top: 1px solid var(--card-border);
+            background: rgba(15, 12, 41, 0.5);
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            margin-right: 0.5rem;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .chat-input input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .chat-input button {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .chat-input button:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Memories Grid */
+        .memories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .memory-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--glow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+        }
+        
+        .memory-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(106, 17, 203, 0.5);
+        }
+        
+        .memory-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+        
+        .memory-content {
+            padding: 1rem;
+        }
+        
+        .memory-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+        
+        .memory-desc {
+            color: var(--light);
+            font-size: 0.9rem;
+        }
+        
+        /* File Upload */
+        .file-upload {
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: rgba(106, 17, 203, 0.1);
+        }
+        
+        .file-upload input {
+            display: none;
+        }
+        
+        .upload-text {
+            color: var(--light);
+            margin-top: 0.5rem;
+        }
+        
+        /* Status Messages */
+        .status-message {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .status-success {
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+        }
+        
+        .status-error {
+            background: rgba(255, 23, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(255, 23, 68, 0.2);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--light);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+            color: var(--light);
+        }
+        
+        /* Map Link */
+        .map-link {
+            color: var(--accent);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .map-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* ID Proof Preview */
+        .id-preview {
+            width: 100%;
+            max-width: 200px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 10px;
+            border: 1px solid var(--card-border);
+        }
+        
+        .id-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .memories-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: var(--glow);
+            display: none;
+            z-index: 1000;
+            max-width: 300px;
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.5s;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--light);
+            cursor: pointer;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            color: white;
+        }
+        
+        .notification-body {
+            color: var(--light);
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation"></div>
+    
+    <!-- Login Section -->
+    <div id="loginSection" class="login-container">
+        <div class="login-form">
+            <h2><i class="fas fa-users"></i> Nexus Team Hub</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--light);">Secure Team Management Portal</p>
+            <div id="loginStatus" class="status-message"></div>
+            <form id="loginForm">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit"><i class="fas fa-sign-in-alt"></i> Access Portal</button>
+            </form>
+            <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--light);">
+                Default credentials: <strong>admin</strong> / <strong>admin123</strong>
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app" class="app">
+        <header class="app-header">
+            <div class="container header-content">
+                <h1><i class="fas fa-gamepad"></i> Nexus Team Hub</h1>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <span id="userName">Admin</span>
+                    <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <nav class="app-nav">
+            <div class="container">
+                <div class="nav-tabs">
+                    <button class="nav-tab active" data-tab="team">
+                        <i class="fas fa-users"></i> Team Members
+                    </button>
+                    <button class="nav-tab" data-tab="events">
+                        <i class="fas fa-calendar-alt"></i> Events
+                    </button>
+                    <button class="nav-tab" data-tab="documents">
+                        <i class="fas fa-file-alt"></i> Documents
+                    </button>
+                    <button class="nav-tab" data-tab="chat">
+                        <i class="fas fa-comments"></i> Team Chat
+                        <span id="chatNotification" class="notification-badge" style="display: none;">0</span>
+                    </button>
+                    <button class="nav-tab" data-tab="memories">
+                        <i class="fas fa-images"></i> Memories
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="app-main">
+            <div class="container">
+                <!-- Team Members Tab -->
+                <div id="teamTab" class="tab-content active">
+                    <h2 class="section-title"><i class="fas fa-users"></i> Team Members</h2>
+                    
+                    <div class="form-container">
+                        <h3 style="margin-bottom: 1rem; color: white;">Add New Team Member</h3>
+                        <div id="teamStatus" class="status-message"></div>
+                        <form id="teamForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="memberName">Full Name</label>
+                                    <input type="text" id="memberName" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="memberDOB">Date of Birth</label>
+                                    <input type="date" id="memberDOB" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="memberRollNo">Roll Number</label>
+                                    <input type="text" id="memberRollNo" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="memberEmail">Email</label>
+                                    <input type="email" id="memberEmail" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="memberContact">Contact Number</label>
+                                    <input type="tel" id="memberContact" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="memberCollege">College/Institute</label>
+                                    <input type="text" id="memberCollege" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="memberCity">City</label>
+                                    <input type="text" id="memberCity" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="memberDepartment">Department</label>
+                                    <input type="text" id="memberDepartment" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="memberYear">Year</label>
+                                    <select id="memberYear" class="form-control" required>
+                                        <option value="">Select Year</option>
+                                        <option value="1st Year">1st Year</option>
+                                        <option value="2nd Year">2nd Year</option>
+                                        <option value="3rd Year">3rd Year</option>
+                                        <option value="4th Year">4th Year</option>
+                                        <option value="5th Year">5th Year</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="memberAadhaar">Aadhaar Number</label>
+                                    <input type="text" id="memberAadhaar" class="form-control" required>
+                                </div>
+                                <div class="form-group" style="grid-column: 1 / -1;">
+                                    <label>ID Proof (Image)</label>
+                                    <div class="file-upload" id="idProofUpload">
+                                        <i class="fas fa-id-card" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                                        <p class="upload-text">Click to upload ID Proof</p>
+                                        <input type="file" id="idProof" accept="image/*" required>
+                                    </div>
+                                    <div id="idPreview" class="id-preview"></div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn"><i class="fas fa-user-plus"></i> Add Team Member</button>
+                        </form>
+                    </div>
+                    
+                    <h3 style="margin-bottom: 1rem; color: white;">Team Roster</h3>
+                    <div id="teamMembersList" class="cards-grid">
+                        <div class="empty-state">
+                            <i class="fas fa-users"></i>
+                            <h3>No Team Members Yet</h3>
+                            <p>Add your first team member using the form above.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Events Tab -->
+                <div id="eventsTab" class="tab-content">
+                    <h2 class="section-title"><i class="fas fa-calendar-alt"></i> Events</h2>
+                    
+                    <div class="form-container">
+                        <h3 style="margin-bottom: 1rem; color: white;">Create New Event</h3>
+                        <div id="eventStatus" class="status-message"></div>
+                        <form id="eventForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="eventTitle">Event Title</label>
+                                    <input type="text" id="eventTitle" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventMode">Mode of Event</label>
+                                    <select id="eventMode" class="form-control" required>
+                                        <option value="">Select Mode</option>
+                                        <option value="Online">Online</option>
+                                        <option value="Offline">Offline</option>
+                                        <option value="Hybrid">Hybrid</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventDateTime">Date & Time</label>
+                                    <input type="datetime-local" id="eventDateTime" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventPlace">Place</label>
+                                    <input type="text" id="eventPlace" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventLocation">Location/Map Link</label>
+                                    <input type="text" id="eventLocation" class="form-control" placeholder="https://maps.google.com/...">
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventTeamSize">Team Size</label>
+                                    <input type="number" id="eventTeamSize" class="form-control" min="1">
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventOrganizerContact">Organizer Contact</label>
+                                    <input type="text" id="eventOrganizerContact" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventOrganizerEmail">Organizer Email</label>
+                                    <input type="email" id="eventOrganizerEmail" class="form-control" required>
+                                </div>
+                                <div class="form-group" style="grid-column: 1 / -1;">
+                                    <label>Event Pamphlet (Image)</label>
+                                    <div class="file-upload" id="eventPamphletUpload">
+                                        <i class="fas fa-file-image" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                                        <p class="upload-text">Click to upload Event Pamphlet</p>
+                                        <input type="file" id="eventPamphlet" accept="image/*" required>
+                                    </div>
+                                    <div id="eventPamphletPreview" class="id-preview"></div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn"><i class="fas fa-calendar-plus"></i> Create Event</button>
+                        </form>
+                    </div>
+                    
+                    <h3 style="margin-bottom: 1rem; color: white;">Upcoming Events</h3>
+                    <div id="eventsList" class="cards-grid">
+                        <div class="empty-state">
+                            <i class="fas fa-calendar-alt"></i>
+                            <h3>No Events Yet</h3>
+                            <p>Create your first event using the form above.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documents Tab -->
+                <div id="documentsTab" class="tab-content">
+                    <h2 class="section-title"><i class="fas fa-file-alt"></i> Documents</h2>
+                    
+                    <div class="form-container">
+                        <h3 style="margin-bottom: 1rem; color: white;">Upload New Document</h3>
+                        <div id="documentStatus" class="status-message"></div>
+                        <form id="documentForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="docTitle">Document Title</label>
+                                    <input type="text" id="docTitle" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="docEvent">Event Name</label>
+                                    <select id="docEvent" class="form-control" required>
+                                        <option value="">Select Event</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="grid-column: 1 / -1;">
+                                    <label>Document File</label>
+                                    <div class="file-upload" id="docFileUpload">
+                                        <i class="fas fa-file-pdf" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                                        <p class="upload-text">Click to upload Document File</p>
+                                        <input type="file" id="documentFile" required>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="grid-column: 1 / -1;">
+                                    <label>Document with Pamphlet (Image)</label>
+                                    <div class="file-upload" id="docPamphletUpload">
+                                        <i class="fas fa-file-image" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                                        <p class="upload-text">Click to upload Document with Pamphlet</p>
+                                        <input type="file" id="docPamphlet" accept="image/*" required>
+                                    </div>
+                                    <div id="docPamphletPreview" class="id-preview"></div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn"><i class="fas fa-upload"></i> Upload Document</button>
+                        </form>
+                    </div>
+                    
+                    <h3 style="margin-bottom: 1rem; color: white;">Document Library</h3>
+                    <div id="documentsList" class="cards-grid">
+                        <div class="empty-state">
+                            <i class="fas fa-file-alt"></i>
+                            <h3>No Documents Yet</h3>
+                            <p>Upload your first document using the form above.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Tab -->
+                <div id="chatTab" class="tab-content">
+                    <h2 class="section-title"><i class="fas fa-comments"></i> Team Chat</h2>
+                    
+                    <div class="chat-container">
+                        <div class="chat-header">
+                            <h3 style="color: white;">Team Discussion</h3>
+                            <div class="online-users">
+                                <span style="color: var(--light);">Online:</span>
+                                <span id="onlineCount">1</span>
+                                <div class="user-dot"></div>
+                            </div>
+                        </div>
+                        <div id="chatMessages" class="chat-messages">
+                            <div class="empty-state" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                                <i class="fas fa-comments"></i>
+                                <h3>No Messages Yet</h3>
+                                <p>Start a conversation by sending a message.</p>
+                            </div>
+                        </div>
+                        <div class="chat-input">
+                            <input type="text" id="chatInput" placeholder="Type your message...">
+                            <button id="sendMessageBtn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Memories Tab -->
+                <div id="memoriesTab" class="tab-content">
+                    <h2 class="section-title"><i class="fas fa-images"></i> Memories</h2>
+                    
+                    <div class="form-container">
+                        <h3 style="margin-bottom: 1rem; color: white;">Add New Memory</h3>
+                        <div id="memoryStatus" class="status-message"></div>
+                        <form id="memoryForm">
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Memory Image</label>
+                                <div class="file-upload" id="memoryFileUpload">
+                                    <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                                    <p class="upload-text">Click to upload memory image</p>
+                                    <input type="file" id="memoryImage" accept="image/*" required>
+                                </div>
+                                <div id="memoryPreview" class="id-preview"></div>
+                            </div>
+                            <button type="submit" class="btn"><i class="fas fa-plus"></i> Add Memory</button>
+                        </form>
+                    </div>
+                    
+                    <h3 style="margin-bottom: 1rem; color: white;">Memory Gallery</h3>
+                    <div id="memoriesList" class="memories-grid">
+                        <div class="empty-state">
+                            <i class="fas fa-images"></i>
+                            <h3>No Memories Yet</h3>
+                            <p>Add your first memory using the form above.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <div class="notification-header">
+            <div class="notification-title">New Message</div>
+            <button class="notification-close">&times;</button>
+        </div>
+        <div class="notification-body" id="notificationBody">You have a new message in Team Chat</div>
+    </div>
+
+    <script>
+        // Application State
+        const state = {
+            isLoggedIn: false,
+            currentUser: null,
+            teamMembers: [],
+            events: [],
+            documents: [],
+            chatMessages: [],
+            memories: [],
+            users: [
+                { id: 1, username: 'admin', password: 'admin123', name: 'Admin', avatar: 'A' },
+                { id: 2, username: 'john', password: 'john123', name: 'John Doe', avatar: 'J' },
+                { id: 3, username: 'sara', password: 'sara123', name: 'Sara Wilson', avatar: 'S' },
+                { id: 4, username: 'mike', password: 'mike123', name: 'Mike Johnson', avatar: 'M' }
+            ],
+            onlineUsers: [],
+            unreadMessages: 0
+        };
+
+        // DOM Elements
+        const loginSection = document.getElementById('loginSection');
+        const app = document.getElementById('app');
+        const loginForm = document.getElementById('loginForm');
+        const loginStatus = document.getElementById('loginStatus');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+        const navTabs = document.querySelectorAll('.nav-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const chatNotification = document.getElementById('chatNotification');
+        const onlineCount = document.getElementById('onlineCount');
+        const notification = document.getElementById('notification');
+        const notificationBody = document.getElementById('notificationBody');
+        const notificationClose = document.querySelector('.notification-close');
+
+        // Form Elements
+        const teamForm = document.getElementById('teamForm');
+        const eventForm = document.getElementById('eventForm');
+        const documentForm = document.getElementById('documentForm');
+        const memoryForm = document.getElementById('memoryForm');
+        const chatInput = document.getElementById('chatInput');
+        const sendMessageBtn = document.getElementById('sendMessageBtn');
+        const docEvent = document.getElementById('docEvent');
+
+        // File Upload Elements
+        const idProofUpload = document.getElementById('idProofUpload');
+        const idProof = document.getElementById('idProof');
+        const idPreview = document.getElementById('idPreview');
+        const eventPamphletUpload = document.getElementById('eventPamphletUpload');
+        const eventPamphlet = document.getElementById('eventPamphlet');
+        const eventPamphletPreview = document.getElementById('eventPamphletPreview');
+        const docFileUpload = document.getElementById('docFileUpload');
+        const documentFile = document.getElementById('documentFile');
+        const docPamphletUpload = document.getElementById('docPamphletUpload');
+        const docPamphlet = document.getElementById('docPamphlet');
+        const docPamphletPreview = document.getElementById('docPamphletPreview');
+        const memoryFileUpload = document.getElementById('memoryFileUpload');
+        const memoryImage = document.getElementById('memoryImage');
+        const memoryPreview = document.getElementById('memoryPreview');
+
+        // Initialize the application
+        function init() {
+            // Check if user is already logged in
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                state.currentUser = JSON.parse(savedUser);
+                state.isLoggedIn = true;
+                showApp();
+            }
+
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Load sample data for demonstration
+            loadSampleData();
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Login form
+            loginForm.addEventListener('submit', handleLogin);
+            
+            // Logout button
+            logoutBtn.addEventListener('click', handleLogout);
+            
+            // Navigation tabs
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+            });
+            
+            // Forms
+            teamForm.addEventListener('submit', handleAddTeamMember);
+            eventForm.addEventListener('submit', handleAddEvent);
+            documentForm.addEventListener('submit', handleAddDocument);
+            memoryForm.addEventListener('submit', handleAddMemory);
+            
+            // Chat
+            sendMessageBtn.addEventListener('click', handleSendMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleSendMessage();
+            });
+            
+            // File uploads
+            idProofUpload.addEventListener('click', () => idProof.click());
+            eventPamphletUpload.addEventListener('click', () => eventPamphlet.click());
+            docFileUpload.addEventListener('click', () => documentFile.click());
+            docPamphletUpload.addEventListener('click', () => docPamphlet.click());
+            memoryFileUpload.addEventListener('click', () => memoryImage.click());
+            
+            // File input changes
+            idProof.addEventListener('change', (e) => handleFileSelect(e, idPreview));
+            eventPamphlet.addEventListener('change', (e) => handleFileSelect(e, eventPamphletPreview));
+            docPamphlet.addEventListener('change', (e) => handleFileSelect(e, docPamphletPreview));
+            memoryImage.addEventListener('change', (e) => handleFileSelect(e, memoryPreview));
+            
+            // Notification close
+            notificationClose.addEventListener('click', () => {
+                notification.style.display = 'none';
+            });
+            
+            // Simulate other users joining
+            setInterval(simulateUserActivity, 10000);
+        }
+
+        // Handle login
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Check credentials
+            const user = state.users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                state.currentUser = user;
+                state.isLoggedIn = true;
+                
+                // Add to online users if not already there
+                if (!state.onlineUsers.find(u => u.id === user.id)) {
+                    state.onlineUsers.push(user);
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('currentUser', JSON.stringify(state.currentUser));
+                
+                showApp();
+                showStatus(loginStatus, 'Login successful! Welcome to Nexus Team Hub.', 'success');
+            } else {
+                showStatus(loginStatus, 'Invalid credentials. Please try again.', 'error');
+            }
+        }
+
+        // Handle logout
+        function handleLogout() {
+            // Remove from online users
+            state.onlineUsers = state.onlineUsers.filter(u => u.id !== state.currentUser.id);
+            
+            state.isLoggedIn = false;
+            state.currentUser = null;
+            localStorage.removeItem('currentUser');
+            showLogin();
+        }
+
+        // Show the main application
+        function showApp() {
+            loginSection.style.display = 'none';
+            app.style.display = 'block';
+            
+            // Update user info
+            userAvatar.textContent = state.currentUser.avatar;
+            userName.textContent = state.currentUser.name;
+            
+            // Load initial data for the active tab
+            const activeTab = document.querySelector('.nav-tab.active').dataset.tab;
+            loadTabData(activeTab);
+            
+            // Update online users count
+            updateOnlineUsers();
+        }
+
+        // Show the login screen
+        function showLogin() {
+            loginSection.style.display = 'flex';
+            app.style.display = 'none';
+            
+            // Clear login form
+            loginForm.reset();
+            loginStatus.style.display = 'none';
+        }
+
+        // Switch between tabs
+        function switchTab(tabId) {
+            // Update active tab
+            navTabs.forEach(tab => {
+                if (tab.dataset.tab === tabId) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            // Show active tab content
+            tabContents.forEach(content => {
+                if (content.id === `${tabId}Tab`) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+            
+            // Load data for the tab
+            loadTabData(tabId);
+            
+            // If switching to chat, reset notification count
+            if (tabId === 'chat') {
+                state.unreadMessages = 0;
+                chatNotification.style.display = 'none';
+            }
+        }
+
+        // Load data for a specific tab
+        function loadTabData(tabId) {
+            switch(tabId) {
+                case 'team':
+                    renderTeamMembers();
+                    break;
+                case 'events':
+                    renderEvents();
+                    updateEventDropdown();
+                    break;
+                case 'documents':
+                    renderDocuments();
+                    break;
+                case 'chat':
+                    renderChat();
+                    break;
+                case 'memories':
+                    renderMemories();
+                    break;
+            }
+        }
+
+        // Update event dropdown in documents form
+        function updateEventDropdown() {
+            docEvent.innerHTML = '<option value="">Select Event</option>';
+            state.events.forEach(event => {
+                const option = document.createElement('option');
+                option.value = event.id;
+                option.textContent = event.title;
+                docEvent.appendChild(option);
+            });
+        }
+
+        // Handle adding a team member
+        function handleAddTeamMember(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('memberName').value;
+            const dob = document.getElementById('memberDOB').value;
+            const rollNo = document.getElementById('memberRollNo').value;
+            const email = document.getElementById('memberEmail').value;
+            const contact = document.getElementById('memberContact').value;
+            const college = document.getElementById('memberCollege').value;
+            const city = document.getElementById('memberCity').value;
+            const department = document.getElementById('memberDepartment').value;
+            const year = document.getElementById('memberYear').value;
+            const aadhaar = document.getElementById('memberAadhaar').value;
+            const idProofFile = idProof.files[0];
+            
+            if (!idProofFile) {
+                showStatus(document.getElementById('teamStatus'), 'Please upload an ID proof image.', 'error');
+                return;
+            }
+            
+            const idProofUrl = URL.createObjectURL(idProofFile);
+            
+            const newMember = {
+                id: Date.now(),
+                name,
+                dob,
+                rollNo,
+                email,
+                contact,
+                college,
+                city,
+                department,
+                year,
+                aadhaar,
+                idProof: idProofUrl,
+                joinDate: new Date().toISOString()
+            };
+            
+            state.teamMembers.push(newMember);
+            renderTeamMembers();
+            teamForm.reset();
+            idPreview.innerHTML = '';
+            
+            showStatus(document.getElementById('teamStatus'), 'Team member added successfully!', 'success');
+            
+            // Send notification to chat
+            const chatMessage = {
+                id: Date.now(),
+                sender: 'System',
+                message: `${state.currentUser.name} added a new team member: ${name}`,
+                timestamp: new Date().toISOString(),
+                type: 'system'
+            };
+            
+            state.chatMessages.push(chatMessage);
+            if (document.querySelector('.nav-tab.active').dataset.tab !== 'chat') {
+                state.unreadMessages++;
+                chatNotification.textContent = state.unreadMessages;
+                chatNotification.style.display = 'flex';
+            }
+            renderChat();
+        }
+
+        // Handle adding an event
+        function handleAddEvent(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('eventTitle').value;
+            const mode = document.getElementById('eventMode').value;
+            const dateTime = document.getElementById('eventDateTime').value;
+            const place = document.getElementById('eventPlace').value;
+            const location = document.getElementById('eventLocation').value;
+            const teamSize = document.getElementById('eventTeamSize').value;
+            const organizerContact = document.getElementById('eventOrganizerContact').value;
+            const organizerEmail = document.getElementById('eventOrganizerEmail').value;
+            const pamphletFile = eventPamphlet.files[0];
+            
+            if (!pamphletFile) {
+                showStatus(document.getElementById('eventStatus'), 'Please upload an event pamphlet.', 'error');
+                return;
+            }
+            
+            const pamphletUrl = URL.createObjectURL(pamphletFile);
+            
+            const newEvent = {
+                id: Date.now(),
+                title,
+                mode,
+                dateTime,
+                place,
+                location,
+                teamSize,
+                organizerContact,
+                organizerEmail,
+                pamphlet: pamphletUrl,
+                createdAt: new Date().toISOString()
+            };
+            
+            state.events.push(newEvent);
+            renderEvents();
+            updateEventDropdown();
+            eventForm.reset();
+            eventPamphletPreview.innerHTML = '';
+            
+            showStatus(document.getElementById('eventStatus'), 'Event created successfully!', 'success');
+            
+            // Send notification to chat
+            const chatMessage = {
+                id: Date.now(),
+                sender: 'System',
+                message: `${state.currentUser.name} created a new event: ${title}`,
+                timestamp: new Date().toISOString(),
+                type: 'system'
+            };
+            
+            state.chatMessages.push(chatMessage);
+            if (document.querySelector('.nav-tab.active').dataset.tab !== 'chat') {
+                state.unreadMessages++;
+                chatNotification.textContent = state.unreadMessages;
+                chatNotification.style.display = 'flex';
+            }
+            renderChat();
+        }
+
+        // Handle adding a document
+        function handleAddDocument(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('docTitle').value;
+            const eventId = document.getElementById('docEvent').value;
+            const documentFile = document.getElementById('documentFile').files[0];
+            const pamphletFile = docPamphlet.files[0];
+            
+            if (!documentFile) {
+                showStatus(document.getElementById('documentStatus'), 'Please upload a document file.', 'error');
+                return;
+            }
+            
+            if (!pamphletFile) {
+                showStatus(document.getElementById('documentStatus'), 'Please upload a document pamphlet.', 'error');
+                return;
+            }
+            
+            const event = state.events.find(e => e.id == eventId);
+            const pamphletUrl = URL.createObjectURL(pamphletFile);
+            
+            const newDocument = {
+                id: Date.now(),
+                title,
+                event: event ? event.title : 'N/A',
+                file: documentFile.name,
+                pamphlet: pamphletUrl,
+                uploadDate: new Date().toISOString()
+            };
+            
+            state.documents.push(newDocument);
+            renderDocuments();
+            documentForm.reset();
+            docPamphletPreview.innerHTML = '';
+            
+            showStatus(document.getElementById('documentStatus'), 'Document uploaded successfully!', 'success');
+            
+            // Send notification to chat
+            const chatMessage = {
+                id: Date.now(),
+                sender: 'System',
+                message: `${state.currentUser.name} uploaded a new document: ${title}`,
+                timestamp: new Date().toISOString(),
+                type: 'system'
+            };
+            
+            state.chatMessages.push(chatMessage);
+            if (document.querySelector('.nav-tab.active').dataset.tab !== 'chat') {
+                state.unreadMessages++;
+                chatNotification.textContent = state.unreadMessages;
+                chatNotification.style.display = 'flex';
+            }
+            renderChat();
+        }
+
+        // Handle adding a memory
+        function handleAddMemory(e) {
+            e.preventDefault();
+            
+            const imageFile = memoryImage.files[0];
+            
+            if (!imageFile) {
+                showStatus(document.getElementById('memoryStatus'), 'Please upload a memory image.', 'error');
+                return;
+            }
+            
+            const imageUrl = URL.createObjectURL(imageFile);
+            
+            const newMemory = {
+                id: Date.now(),
+                image: imageUrl,
+                uploadDate: new Date().toISOString()
+            };
+            
+            state.memories.push(newMemory);
+            renderMemories();
+            memoryForm.reset();
+            memoryPreview.innerHTML = '';
+            
+            showStatus(document.getElementById('memoryStatus'), 'Memory added successfully!', 'success');
+            
+            // Send notification to chat
+            const chatMessage = {
+                id: Date.now(),
+                sender: 'System',
+                message: `${state.currentUser.name} added a new memory to the gallery`,
+                timestamp: new Date().toISOString(),
+                type: 'system'
+            };
+            
+            state.chatMessages.push(chatMessage);
+            if (document.querySelector('.nav-tab.active').dataset.tab !== 'chat') {
+                state.unreadMessages++;
+                chatNotification.textContent = state.unreadMessages;
+                chatNotification.style.display = 'flex';
+            }
+            renderChat();
+        }
+
+        // Handle sending a chat message
+        function handleSendMessage() {
+            const messageText = chatInput.value.trim();
+            if (!messageText) return;
+            
+            const newMessage = {
+                id: Date.now(),
+                sender: state.currentUser.name,
+                message: messageText,
+                timestamp: new Date().toISOString(),
+                type: state.currentUser.username === 'admin' ? 'owner' : 'team'
+            };
+            
+            state.chatMessages.push(newMessage);
+            renderChat();
+            chatInput.value = '';
+            
+            // Show notification to other users
+            if (state.onlineUsers.length > 1) {
+                showNotification(`${state.currentUser.name} sent a message`, messageText);
+            }
+        }
+
+        // Show notification
+        function showNotification(title, body) {
+            notificationBody.textContent = body;
+            notification.querySelector('.notification-title').textContent = title;
+            notification.style.display = 'block';
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+
+        // Handle file selection
+        function handleFileSelect(e, previewElement) {
+            const fileInput = e.target;
+            const fileUploadDiv = fileInput.closest('.file-upload');
+            const fileName = fileInput.files[0] ? fileInput.files[0].name : 'No file selected';
+            
+            fileUploadDiv.querySelector('.upload-text').textContent = fileName;
+            
+            // Show preview for images
+            if (fileInput.files[0] && fileInput.files[0].type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewElement.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+
+        // Render team members
+        function renderTeamMembers() {
+            const container = document.getElementById('teamMembersList');
+            
+            if (state.teamMembers.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-users"></i>
+                        <h3>No Team Members Yet</h3>
+                        <p>Add your first team member using the form above.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            state.teamMembers.forEach(member => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <h3 class="card-title">${member.name}</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text"><i class="fas fa-id-card"></i> <strong>Roll No:</strong> ${member.rollNo}</p>
+                        <p class="card-text"><i class="fas fa-envelope"></i> <strong>Email:</strong> ${member.email}</p>
+                        <p class="card-text"><i class="fas fa-phone"></i> <strong>Contact:</strong> ${member.contact}</p>
+                        <p class="card-text"><i class="fas fa-university"></i> <strong>College:</strong> ${member.college}</p>
+                        <p class="card-text"><i class="fas fa-map-marker-alt"></i> <strong>City:</strong> ${member.city}</p>
+                        <p class="card-text"><i class="fas fa-graduation-cap"></i> <strong>Department:</strong> ${member.department}</p>
+                        <p class="card-text"><i class="fas fa-calendar"></i> <strong>Year:</strong> ${member.year}</p>
+                        <p class="card-text"><i class="fas fa-fingerprint"></i> <strong>Aadhaar:</strong> ${member.aadhaar}</p>
+                        <p class="card-text"><i class="fas fa-birthday-cake"></i> <strong>DOB:</strong> ${new Date(member.dob).toLocaleDateString()}</p>
+                        <div class="id-preview">
+                            <img src="${member.idProof}" alt="ID Proof">
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Render events
+        function renderEvents() {
+            const container = document.getElementById('eventsList');
+            
+            if (state.events.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h3>No Events Yet</h3>
+                        <p>Create your first event using the form above.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            state.events.forEach(event => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <h3 class="card-title">${event.title}</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text"><i class="fas fa-laptop"></i> <strong>Mode:</strong> ${event.mode}</p>
+                        <p class="card-text"><i class="fas fa-calendar"></i> <strong>Date & Time:</strong> ${new Date(event.dateTime).toLocaleString()}</p>
+                        <p class="card-text"><i class="fas fa-map-marker-alt"></i> <strong>Place:</strong> ${event.place || 'N/A'}</p>
+                        ${event.location ? `<p class="card-text"><i class="fas fa-map"></i> <strong>Location:</strong> <a href="${event.location}" target="_blank" class="map-link">View on Map <i class="fas fa-external-link-alt"></i></a></p>` : ''}
+                        <p class="card-text"><i class="fas fa-users"></i> <strong>Team Size:</strong> ${event.teamSize || 'N/A'}</p>
+                        <p class="card-text"><i class="fas fa-phone"></i> <strong>Organizer Contact:</strong> ${event.organizerContact}</p>
+                        <p class="card-text"><i class="fas fa-envelope"></i> <strong>Organizer Email:</strong> ${event.organizerEmail}</p>
+                        <div class="id-preview">
+                            <img src="${event.pamphlet}" alt="Event Pamphlet">
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Render documents
+        function renderDocuments() {
+            const container = document.getElementById('documentsList');
+            
+            if (state.documents.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-file-alt"></i>
+                        <h3>No Documents Yet</h3>
+                        <p>Upload your first document using the form above.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            state.documents.forEach(doc => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <h3 class="card-title">${doc.title}</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text"><i class="fas fa-calendar-alt"></i> <strong>Event:</strong> ${doc.event}</p>
+                        <p class="card-text"><i class="fas fa-file"></i> <strong>File:</strong> ${doc.file}</p>
+                        <p class="card-text"><i class="fas fa-calendar"></i> <strong>Uploaded:</strong> ${new Date(doc.uploadDate).toLocaleDateString()}</p>
+                        <div class="id-preview">
+                            <img src="${doc.pamphlet}" alt="Document Pamphlet">
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Render chat
+        function renderChat() {
+            const container = document.getElementById('chatMessages');
+            
+            if (state.chatMessages.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                        <i class="fas fa-comments"></i>
+                        <h3>No Messages Yet</h3>
+                        <p>Start a conversation by sending a message.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            state.chatMessages.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${msg.type === 'system' ? 'team' : msg.type}`;
+                
+                if (msg.type === 'system') {
+                    messageDiv.innerHTML = `
+                        <div class="message-text" style="text-align: center; font-style: italic; opacity: 0.7;">${msg.message}</div>
+                        <div class="message-time">${new Date(msg.timestamp).toLocaleTimeString()}</div>
+                    `;
+                } else {
+                    messageDiv.innerHTML = `
+                        <div class="message-sender">${msg.sender}</div>
+                        <div class="message-text">${msg.message}</div>
+                        <div class="message-time">${new Date(msg.timestamp).toLocaleTimeString()}</div>
+                    `;
+                }
+                
+                container.appendChild(messageDiv);
+            });
+            
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Render memories
+        function renderMemories() {
+            const container = document.getElementById('memoriesList');
+            
+            if (state.memories.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-images"></i>
+                        <h3>No Memories Yet</h3>
+                        <p>Add your first memory using the form above.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            state.memories.forEach(memory => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                
+                card.innerHTML = `
+                    <div class="memory-img">
+                        <img src="${memory.image}" alt="Memory" style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                    <div class="memory-content">
+                        <p class="memory-desc"><i class="fas fa-calendar"></i> <strong>Added:</strong> ${new Date(memory.uploadDate).toLocaleDateString()}</p>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Update online users
+        function updateOnlineUsers() {
+            onlineCount.textContent = state.onlineUsers.length;
+        }
+
+        // Simulate user activity
+        function simulateUserActivity() {
+            if (state.isLoggedIn && Math.random() > 0.7) {
+                // Randomly add/remove users
+                const randomUser = state.users[Math.floor(Math.random() * state.users.length)];
+                
+                if (!state.onlineUsers.find(u => u.id === randomUser.id) && randomUser.id !== state.currentUser.id) {
+                    state.onlineUsers.push(randomUser);
+                    updateOnlineUsers();
+                    
+                    // Add join message
+                    const chatMessage = {
+                        id: Date.now(),
+                        sender: 'System',
+                        message: `${randomUser.name} joined the chat`,
+                        timestamp: new Date().toISOString(),
+                        type: 'system'
+                    };
+                    
+                    state.chatMessages.push(chatMessage);
+                    
+                    if (document.querySelector('.nav-tab.active').dataset.tab !== 'chat') {
+                        state.unreadMessages++;
+                        chatNotification.textContent = state.unreadMessages;
+                        chatNotification.style.display = 'flex';
+                    }
+                    
+                    renderChat();
+                }
+            }
+        }
+
+        // Show status message
+        function showStatus(element, message, type) {
+            element.textContent = message;
+            element.className = `status-message status-${type}`;
+            element.style.display = 'block';
+            
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 3000);
+        }
+
+        // Load sample data for demonstration
+        function loadSampleData() {
+            // Add some sample users to online users
+            state.onlineUsers = [state.users[0]];
+            
+            // Add a welcome message
+            const welcomeMessage = {
+                id: 1,
+                sender: 'System',
+                message: 'Welcome to Nexus Team Hub! Start collaborating with your team.',
+                timestamp: new Date().toISOString(),
+                type: 'system'
+            };
+            
+            state.chatMessages.push(welcomeMessage);
+        }
+
+        // Initialize the application when the page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
